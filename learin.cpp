@@ -1,6 +1,32 @@
 # include "iGraphics.h"
+#include <time.h>
+#include <stdlib.h>
+// boulder gular x change na kore asteriod gular koro
 
 int x = 0, y = 0, r = 20;
+void drawhomepage();
+void drawStartpage();
+void drawAboutpage();
+void drawScorepage();
+void drawMusicpage();
+void bulletchange();
+
+int bouldernumber = 0;
+int gamestate = 1;
+int createBullet = 0;
+typedef struct play{
+	int x;
+	int y;
+}player;
+
+player hero;
+ 
+char boulder[9][250] = {"bmp_outputs//tile001.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//tile003.bmp", "bmp_outputs//tile004.bmp", "bmp_outputs//tile005.bmp", "bmp_outputs//tile006.bmp", "bmp_outputs//tile007.bmp", "bmp_outputs//tile008.bmp", "bmp_outputs//tile009.bmp"};
+int bulletcheck[60] = {0};
+int bouldercheck[9] ={0};
+player boulderCoordinate[9];
+
+
 /*
 	function iDraw() is called again and again by the system.
 
@@ -8,14 +34,31 @@ int x = 0, y = 0, r = 20;
 
 void iDraw() {
         iClear();
-        iSetColor(0, 256, 0);
-        iRectangle(x+ 200,y + 400 , 700, 400);
-        iFilledRectangle(x+ 200,y + 400 , 700, 400);
+		switch(gamestate){
+			case 1:
+			drawhomepage();
+			break;
+			case 2:
+			drawStartpage();
+			break;
+			case 3:
+			drawScorepage();
+			break;
+			case 4 :
+			drawMusicpage();
+			break;
+			case 5 :
+			drawAboutpage();
+			break;
+		}
+        // iSetColor(0, 256, 0);
+        // iRectangle(x+ 200,y + 400 , 700, 400);
+        // iFilledRectangle(x+ 200,y + 400 , 700, 400);
 
 
-        iSetColor(256, 0, 0);
-        iCircle(x+550, y+600, 120);
-        iFilledCircle(x+550, y+600, 120);
+        // iSetColor(256, 0, 0);
+        // iCircle(x+550, y+600, 120);
+        // iFilledCircle(x+550, y+600, 120);
 
 }
 
@@ -35,14 +78,31 @@ void iMouseMove(int mx, int my) {
 void iMouse(int button, int state, int mx, int my) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//place your codes here
-		//	printf("x = %d, y= %d\n",mx,my);
-		x += 10;
-		y += 10;
+		if(gamestate == 1){   // player is in home menu
+			if(mx >= 770 && mx <= 970){
+				
+				if(my >= 10 && my <= 140){   // goes to different menu based on clicks
+					gamestate = 5;
+				}
+				else if(my >= 160 && my <= 290){
+					gamestate = 4;
+				}
+				else if(my >= 310 && my <= 440){
+					gamestate = 3;
+				}
+				else if(my >= 460 && my <= 590){
+					gamestate = 2;
+				}
+			}
+		}
+		if(gamestate == 2){
+			createBullet = 1;
+		}
+		
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
 		//place your codes here
-		x -= 10;
-		y -= 10;
+		printf("x = %d, y= %d\n",mx,my);
 	}
 }
 
@@ -51,9 +111,28 @@ void iMouse(int button, int state, int mx, int my) {
 	key- holds the ASCII value of the key pressed.
 	*/
 void iKeyboard(unsigned char key) {
-	if (key == 'q') {
-		exit(0);
+	if (key == 'k') {
+		createBullet = 1;
 	}
+	else if( key == 'd'){
+		int t = hero.x + 10;
+		if(t > 900){
+			hero.x = 900;
+		}
+		else {
+			hero.x = t;
+		}
+	}
+	else if(key == 'a'){
+		int t = hero.x - 10;
+		if(t < 0){
+			hero.x =0;
+		}
+		else {
+			hero.x = t;
+		}
+	}
+		
 	//place your codes for other keys here
 }
 
@@ -73,10 +152,118 @@ void iSpecialKeyboard(unsigned char key) {
 	}
 	//place your codes for other keys here
 }
+void drawhomepage(){
+    iSetColor(128, 128, 128);
+	iFilledRectangle(0,0,1000,600);
+	iShowBMP2(0,0,"bmp_outputs//home.bmp", 0);
 
+	iShowBMP2(770, 10, "bmp_outputs//buttoncdi.bmp", 0);
+	iShowBMP2(770, 160, "bmp_outputs//buttoncdi.bmp", 0);
+	iShowBMP2(770, 310, "bmp_outputs//buttoncdi.bmp", 0);
+	iShowBMP2(770, 460, "bmp_outputs//buttoncdi.bmp", 0);
+
+	iSetColor(225,225,225);
+	iText(800, 69, "ABOUT", GLUT_BITMAP_TIMES_ROMAN_24);
+	iText(800, 218, "MUSIC", GLUT_BITMAP_TIMES_ROMAN_24);
+	iText(800, 365, "SCORE", GLUT_BITMAP_TIMES_ROMAN_24);
+	iText(800, 518, "PLAY", GLUT_BITMAP_TIMES_ROMAN_24);
+
+}
+void drawStartpage(){
+	srand(time(NULL));
+	iSetColor(128,128,128);
+	iFilledRectangle(0,0,1000,600);
+	iShowBMP2(0,0, "bmp_outputs//background.bmp", 0);
+	iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
+	bulletchange();
+	for(int i = 0; i < 9; i++){
+		if(bouldercheck[i] == 1){
+		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
+	}
+
+	
+
+	
+}}
+void bulletchange(){
+	if(createBullet == 1){ 
+		bulletcheck[8] = hero.x + 45;
+		createBullet = 0;
+	}
+
+	for(int i = 8; i < 60; i++){
+		if(bulletcheck[i] != 0){
+			
+			iShowBMP2(bulletcheck[i], i * 10, "bmp_outputs//sbullet.bmp", 0);
+			// printf("%d", i);  // the value of bullet[i] is the x coordinate of the existing bullet in i *10 bhuj
+			// if it is not here then it is made to be zero as no bullet can be in zero
+		}
+	}
+	for(int i = 59; i >=8; i--){
+			bulletcheck[i + 1] = bulletcheck[i] ;
+			bulletcheck[i] = 0;
+		
+	}
+
+}
+void asteriodgenerate(){
+int t = rand() % 2;
+	int p = rand() % 4;
+	if(t == 1){
+		for(int j = 0, k = 0; j < 9; j++){
+			if(k == p) break;
+			if(bouldercheck[j] == 0){
+
+			bouldercheck[j] = 1;
+			boulderCoordinate[j].x = 0 + rand() % 600;
+			boulderCoordinate[j].y = 575;
+			k++;
+			
+			}
+		}
+		
+	}
+			for(int i = 0; i < 9 ; i++){
+		int s = rand() % 2;
+		
+		// if(s == 0){
+		// 	boulderCoordinate[i].x = boulderCoordinate[i].x + 50  ;
+		// }
+		// else {
+		// 	boulderCoordinate[i].x = boulderCoordinate[i].x - 50  ;
+		// }
+		
+		// if(boulderCoordinate[i].x >= 900) boulderCoordinate[i].x = 900;
+		// if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 10;
+		boulderCoordinate[i].y = boulderCoordinate[i].y - 150;
+		if(boulderCoordinate[i].y < 0){
+			bouldercheck[i] = 0;
+		}
+		}
+
+	}
+	
+
+
+// }
+
+void drawMusicpage(){
+	iSetColor(128,128,128);
+	iFilledRectangle(0,0,1000,600);
+   
+}
+void drawAboutpage(){
+
+}
+void drawScorepage(){
+
+}
 
 int main() {
+	hero.x = 500;
+	hero.y = 0;
+	iSetTimer(250, asteriodgenerate);
 	//place your own initialization codes here.
-	iInitialize(1100, 1100, "learningIgraphics");
+	iInitialize(1000, 600, "learningIgraphics");
 	return 0;
 }
