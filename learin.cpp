@@ -1,6 +1,8 @@
-# include "iGraphics.h"
+#include "iGraphics.h"
+#include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 // boulder gular x change na kore asteriod gular koro
 
 int x = 0, y = 0, r = 20;
@@ -10,7 +12,7 @@ void drawAboutpage();
 void drawScorepage();
 void drawMusicpage();
 void bulletchange();
-
+void boroboulderdraw();
 int bouldernumber = 0;
 int gamestate = 1;
 int createBullet = 0;
@@ -20,8 +22,18 @@ typedef struct play{
 }player;
 
 player hero;
- 
-char boulder[9][250] = {"bmp_outputs//tile001.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//tile003.bmp", "bmp_outputs//tile004.bmp", "bmp_outputs//tile005.bmp", "bmp_outputs//tile006.bmp", "bmp_outputs//tile007.bmp", "bmp_outputs//tile008.bmp", "bmp_outputs//tile009.bmp"};
+typedef struct borobol{
+	char image[250];
+	int x;
+	int y;
+}borobol;
+
+borobol now[4];
+
+
+char boroboulder[4][250] = {"bmp_outputs//tile001.bmp",  "bmp_outputs//tile003.bmp", "bmp_outputs//tile004.bmp", "bmp_outputs//tile005.bmp"};
+//char boulder[9][250] = {"bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp"};
+char boulder[3][250] = {"bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp" };
 int bulletcheck[60] = {0};
 int bouldercheck[9] ={0};
 player boulderCoordinate[9];
@@ -173,15 +185,18 @@ void drawStartpage(){
 	srand(time(NULL));
 	iSetColor(128,128,128);
 	iFilledRectangle(0,0,1000,600);
-	iShowBMP2(0,0, "bmp_outputs//background.bmp", 0);
+	iShowBMP2(0,0, "bmp_outputs//background3.bmp", 0);
 	iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
 	bulletchange();
 	for(int i = 0; i < 9; i++){
 		if(bouldercheck[i] == 1){
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
 	}
-
+	for(int i = 0; i < 4; i++){
+iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
+	}
 	
+	// boroboulderdraw();
 
 	
 }}
@@ -210,7 +225,7 @@ void asteriodgenerate(){
 int t = rand() % 2;
 	int p = rand() % 4;
 	if(t == 1){
-		for(int j = 0, k = 0; j < 9; j++){
+		for(int j = 0, k = 0; j < 3; j++){
 			if(k == p) break;
 			if(bouldercheck[j] == 0){
 
@@ -223,25 +238,39 @@ int t = rand() % 2;
 		}
 		
 	}
-			for(int i = 0; i < 9 ; i++){
+		for(int i = 0; i < 3 ; i++){
 		int s = rand() % 2;
 		
-		// if(s == 0){
-		// 	boulderCoordinate[i].x = boulderCoordinate[i].x + 50  ;
-		// }
-		// else {
-		// 	boulderCoordinate[i].x = boulderCoordinate[i].x - 50  ;
-		// }
+		if(s == 0){
+			boulderCoordinate[i].x = boulderCoordinate[i].x + 50  ;
+		}
+		else {
+			boulderCoordinate[i].x = boulderCoordinate[i].x - 50  ;
+		}
 		
-		// if(boulderCoordinate[i].x >= 900) boulderCoordinate[i].x = 900;
-		// if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 10;
-		boulderCoordinate[i].y = boulderCoordinate[i].y - 150;
+		if(boulderCoordinate[i].x >= 990) boulderCoordinate[i].x = 990;
+		if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 0;
+		boulderCoordinate[i].y = boulderCoordinate[i].y - 50;
 		if(boulderCoordinate[i].y < 0){
 			bouldercheck[i] = 0;
 		}
 		}
 
+		for(int i = 0; i < 4; i++){
+			now[i].y = now[i].y - 70;
+			if(now[i]. y < 5) now[i].y = 598;
+		}
+
 	}
+
+	// void boroboulderdraw(){
+		
+	// 	for(int i = 0; i < 4; i++){
+	// 		iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
+	// 		now[i].y = now[i].y - 70;
+	// 		if(now[i]. y < 5) now[i].y = 598;
+	// 	}
+	// }
 	
 
 
@@ -260,8 +289,22 @@ void drawScorepage(){
 }
 
 int main() {
+	srand(time(NULL));
 	hero.x = 500;
 	hero.y = 0;
+	for(int i = 0; i < 4; i++){
+		strcpy(now[i].image, "bmp_outputs//tile001.bmp");
+		// now[i].y = 598 - (rand() % 100);
+	}
+	now[1].y = 50 + (rand()% 100); 
+	now[2].y = 150 + (rand() % 100);
+	now[3].y = 250 + (rand() % 100);
+	now[4].y = 350 + (rand() % 100);
+
+	now[1].x = 350 + (rand()% 100);
+	now[2].x = 450 + (rand() % 100);
+	now[3].x = 650 + (rand() % 100);
+	now[4].x = 850 + (rand() % 100);
 	iSetTimer(250, asteriodgenerate);
 	//place your own initialization codes here.
 	iInitialize(1000, 600, "learningIgraphics");
