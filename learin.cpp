@@ -12,8 +12,11 @@ void drawAboutpage();
 void drawScorepage();
 void drawMusicpage();
 void bulletchange();
+void collisionCheck2();
+void collisionresult();
+void collisionCheck1();
 // void boroboulderdraw();
-void collisionCheck();
+
 int bouldernumber = 0;
 int gamestate = 1;
 int createBullet = 0;
@@ -53,9 +56,21 @@ player boulderCoordinate[3];
 	function iDraw() is called again and again by the system.
 
 	*/
+char point[10000];
+
+void healthchecker(){
+	iSetColor(129,128,128);
+	iFilledRectangle(700, 500, 100, 40);
+
+    sprintf(point,"Health : %d", hero.health);
+	iSetColor(255,0,0);
+	iText(710, 520, point, GLUT_BITMAP_HELVETICA_10);
+
+}
 
 void iDraw() {
         iClear();
+		
 		switch(gamestate){
 			case 1:
 			drawhomepage();
@@ -209,7 +224,8 @@ void drawStartpage(){
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
 	}
 	}
-	collisionCheck();
+	collisionCheck1();
+	collisionresult();
 	
 	for(int i = 0; i < 4; i++){   
 
@@ -223,8 +239,9 @@ void drawStartpage(){
 		iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
 	
 	}
-	collisionCheck();
-	
+	collisionCheck2();
+	collisionresult();
+	healthchecker();
 	// boroboulderdraw();
 
 	
@@ -236,7 +253,7 @@ void bulletchange(){
 	}
 
 	for(int i = 8; i < 60; i++){
-		if(bulletcheck[i] != 0){
+		if(bulletcheck[i] != 0 && bulletcheck[i] != -1){
 			
 			iShowBMP2(bulletcheck[i], i * 10, "bmp_outputs//sbullet.bmp", 0);
 			// printf("%d", i);  // the value of bullet[i] is the x coordinate of the existing bullet in i *10 bhuj
@@ -345,24 +362,26 @@ void first(){
 	}
 
 }
-void collisionCheck(){
+void collisionCheck1(){
 	// if  bullet hit any boulder
 	// asteriod
 	
 for(int i = 0; i < 60; i++){
-		if(bulletcheck[i] != 0){
+		if(bulletcheck[i] != 0 && bulletcheck[i] != -1){
 			// boulder
-			for(int j = 0; j < 4; j++){
-				if((bulletcheck[i] >= now[j].x && bulletcheck[i] <= now[j].x + 60) &&( (i * 10 >= now[j].y && i * 10 <= now[j].y + 60) )){
-					now[j].health = now[j].health - 10;
-				}
-			}
+			// for(int j = 0; j < 4; j++){
+			// 	if((bulletcheck[i] >= now[j].x && bulletcheck[i] <= now[j].x + 60) &&( (i * 10 >= now[j].y && i * 10 <= now[j].y + 60) )){
+			// 		now[j].health = now[j].health - 10;
+			// 	}
+			// }
 
 			// asteroid
 			for(int k = 0; k < 3; k++){
 				if(bouldercheck[k] == 1){
 					if((bulletcheck[i] >= boulderCoordinate[k].x && bulletcheck[i] <= boulderCoordinate[k].x + 60) &&( (i * 10 >= boulderCoordinate[k].y && i * 10 <= boulderCoordinate[k].y + 60) )){
 						boulderCoordinate[k].health -= 10;
+						bulletcheck[i] = -1;
+						
 					}
 				}
 			}
@@ -370,12 +389,12 @@ for(int i = 0; i < 60; i++){
 	}
 // if any boulder or asteroid hit plane
 
-		for(int j = 0; j < 4; j++){
-				if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
-					hero.health -= 10;
-					now[j].health = 0;
-				}
-			}
+		// for(int j = 0; j < 4; j++){
+		// 		if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
+		// 			hero.health -= 10;
+		// 			now[j].health = 0;
+		// 		}
+		// 	}
 
 		for(int j = 0; j < 3;j++){
 			if(bouldercheck[j] == 1){
@@ -387,6 +406,29 @@ for(int i = 0; i < 60; i++){
 			
 		}
 
+	// 	for(int j = 0; j< 3; j++){
+	// 	if(boulderCoordinate[j].health == 0){
+	// 		iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
+	// 		bouldercheck[j] = 1;
+	// 		boulderCoordinate[j].x = 0 + rand() % 600;
+	// 		boulderCoordinate[j].y = 575;
+	// 		boulderCoordinate[j].health = 10;
+	// 	}
+	// }
+	// for(int j = 0; j<4; j++){
+	// 	if(now[j].health == 0){
+	// 		iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
+	// 		now[j].y = 598;
+	// 		now[j].health = 20;
+			
+	// 	}
+	// }
+	// if(hero.health <= 0){
+	// 	exit(0);
+	// }
+
+}
+void collisionresult(){
 		for(int j = 0; j< 3; j++){
 		if(boulderCoordinate[j].health == 0){
 			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
@@ -407,12 +449,30 @@ for(int i = 0; i < 60; i++){
 	if(hero.health <= 0){
 		exit(0);
 	}
+}
+void collisionCheck2(){
+	for(int i = 0; i < 60; i++){
+		if(bulletcheck[i] != 0 && bulletcheck[i] != -1){
+			// boulder
+			for(int j = 0; j < 4; j++){
+				if((bulletcheck[i] >= now[j].x && bulletcheck[i] <= now[j].x + 60) &&( (i * 10 >= now[j].y && i * 10 <= now[j].y + 60) )){
+					now[j].health = now[j].health - 10;
+					bulletcheck[i] = -1;
+				}
+			}
+		}
+		
+		}
+		for(int j = 0; j < 4; j++){
+				if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
+					hero.health -= 10;
+					now[j].health = 0;
+				}
+			}
 
 }
-void healthchecker(){
 
 
-}
 
 
 int main() {
