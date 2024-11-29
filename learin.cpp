@@ -12,13 +12,15 @@ void drawAboutpage();
 void drawScorepage();
 void drawMusicpage();
 void bulletchange();
-void boroboulderdraw();
+// void boroboulderdraw();
+void collisionCheck();
 int bouldernumber = 0;
 int gamestate = 1;
 int createBullet = 0;
 typedef struct play{
 	int x;
 	int y;
+	int health;
 }player;
 
 player hero;
@@ -26,17 +28,25 @@ typedef struct borobol{
 	char image[250];
 	int x;
 	int y;
+	int health;
 }borobol;
+// typedef struct boulder{
+// 	char image[250];
+// 	int x;
+// 	int y;
+// 	int health;
+// }boulder;
 
 borobol now[4];
+// boulder drim[3];
 
 
-char boroboulder[4][250] = {"bmp_outputs//tile001.bmp",  "bmp_outputs//tile003.bmp", "bmp_outputs//tile004.bmp", "bmp_outputs//tile005.bmp"};
+// char boroboulder[4][250] = {"bmp_outputs//tile001.bmp",  "bmp_outputs//tile003.bmp", "bmp_outputs//tile004.bmp", "bmp_outputs//tile005.bmp"};
 //char boulder[9][250] = {"bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp"};
 char boulder[3][250] = {"bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp" };
 int bulletcheck[60] = {0};
-int bouldercheck[9] ={0};
-player boulderCoordinate[9];
+int bouldercheck[3] ={0};
+player boulderCoordinate[3];
 
 
 /*
@@ -188,18 +198,37 @@ void drawStartpage(){
 	iShowBMP2(0,0, "bmp_outputs//background3.bmp", 0);
 	iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
 	bulletchange();
-	for(int i = 0; i < 9; i++){
-		if(bouldercheck[i] == 1){
+	for(int i = 0; i < 3; i++){
+		if(bouldercheck[i] == 1){  // it will work on bouldercheck status
+		// if(boulderCoordinate[i].health == 0){
+		// 	iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, "bmp_outputs//collision.bmp",0);
+		// } 
+		// else{
+		// 	iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
+		// }
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
 	}
-	for(int i = 0; i < 4; i++){
-iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
 	}
+	collisionCheck();
+	
+	for(int i = 0; i < 4; i++){   
+
+		// check how health is;
+		// if(now[i].health == 0 ){
+		// iShowBMP2(now[i].x,now[i].y, "bmp_outputs//collision.bmp",0);
+		// }
+		// else{
+		// 	iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
+		// }
+		iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
+	
+	}
+	collisionCheck();
 	
 	// boroboulderdraw();
 
 	
-}}
+}
 void bulletchange(){
 	if(createBullet == 1){ 
 		bulletcheck[8] = hero.x + 45;
@@ -222,10 +251,12 @@ void bulletchange(){
 
 }
 void asteriodgenerate(){
+
+
 int t = rand() % 2;
 	int p = rand() % 4;
 	if(t == 1){
-		for(int j = 0, k = 0; j < 3; j++){
+		for(int j = 0, k = 0; j < 3; j++){  // generating boulder at the start
 			if(k == p) break;
 			if(bouldercheck[j] == 0){
 
@@ -239,7 +270,7 @@ int t = rand() % 2;
 		
 	}
 		for(int i = 0; i < 3 ; i++){
-		int s = rand() % 2;
+		int s = rand() % 2;   //changing existing boulder coordinate
 		
 		if(s == 0){
 			boulderCoordinate[i].x = boulderCoordinate[i].x + 50  ;
@@ -251,14 +282,16 @@ int t = rand() % 2;
 		if(boulderCoordinate[i].x >= 990) boulderCoordinate[i].x = 990;
 		if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 0;
 		boulderCoordinate[i].y = boulderCoordinate[i].y - 50;
-		if(boulderCoordinate[i].y < 0){
-			bouldercheck[i] = 0;
+		if(boulderCoordinate[i].y < 5){
+			bouldercheck[i] = 0;  //removing it when reaches the end of the screen;
 		}
 		}
 
 		for(int i = 0; i < 4; i++){
 			now[i].y = now[i].y - 70;
+			// noshto hoye geleo etai korbo(health 0 hoile)
 			if(now[i]. y < 5) now[i].y = 598;
+		
 		}
 
 	}
@@ -287,14 +320,15 @@ void drawAboutpage(){
 void drawScorepage(){
 
 }
-
-int main() {
-	srand(time(NULL));
+void first(){
+		srand(time(NULL));
 	hero.x = 500;
 	hero.y = 0;
+	hero.health = 100;
 	for(int i = 0; i < 4; i++){
 		strcpy(now[i].image, "bmp_outputs//tile001.bmp");
 		// now[i].y = 598 - (rand() % 100);
+		now[i].health = 20;
 	}
 	now[1].y = 50 + (rand()% 100); 
 	now[2].y = 150 + (rand() % 100);
@@ -305,6 +339,85 @@ int main() {
 	now[2].x = 450 + (rand() % 100);
 	now[3].x = 650 + (rand() % 100);
 	now[4].x = 850 + (rand() % 100);
+
+	for(int i = 0; i < 3; i++){
+		boulderCoordinate[i].health = 10;
+	}
+
+}
+void collisionCheck(){
+	// if  bullet hit any boulder
+	// asteriod
+	
+for(int i = 0; i < 60; i++){
+		if(bulletcheck[i] != 0){
+			// boulder
+			for(int j = 0; j < 4; j++){
+				if((bulletcheck[i] >= now[j].x && bulletcheck[i] <= now[j].x + 60) &&( (i * 10 >= now[j].y && i * 10 <= now[j].y + 60) )){
+					now[j].health = now[j].health - 10;
+				}
+			}
+
+			// asteroid
+			for(int k = 0; k < 3; k++){
+				if(bouldercheck[k] == 1){
+					if((bulletcheck[i] >= boulderCoordinate[k].x && bulletcheck[i] <= boulderCoordinate[k].x + 60) &&( (i * 10 >= boulderCoordinate[k].y && i * 10 <= boulderCoordinate[k].y + 60) )){
+						boulderCoordinate[k].health -= 10;
+					}
+				}
+			}
+		}
+	}
+// if any boulder or asteroid hit plane
+
+		for(int j = 0; j < 4; j++){
+				if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
+					hero.health -= 10;
+					now[j].health = 0;
+				}
+			}
+
+		for(int j = 0; j < 3;j++){
+			if(bouldercheck[j] == 1){
+				if(( boulderCoordinate[j].x + 60 >= hero.x && boulderCoordinate[j].x <= hero.x + 105) &&( boulderCoordinate[j].y <= hero.y + 80 )){
+					hero.health -= 5;
+					boulderCoordinate[j].health = 0;
+				}
+			}
+			
+		}
+
+		for(int j = 0; j< 3; j++){
+		if(boulderCoordinate[j].health == 0){
+			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
+			bouldercheck[j] = 1;
+			boulderCoordinate[j].x = 0 + rand() % 600;
+			boulderCoordinate[j].y = 575;
+			boulderCoordinate[j].health = 10;
+		}
+	}
+	for(int j = 0; j<4; j++){
+		if(now[j].health == 0){
+			iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
+			now[j].y = 598;
+			now[j].health = 20;
+			
+		}
+	}
+	if(hero.health <= 0){
+		exit(0);
+	}
+
+}
+void healthchecker(){
+
+
+}
+
+
+int main() {
+	first();
+	// iSetTimer(100, healthchecker);
 	iSetTimer(250, asteriodgenerate);
 	//place your own initialization codes here.
 	iInitialize(1000, 600, "learningIgraphics");
