@@ -400,6 +400,7 @@ for(int i = 0; i < 60; i++){
 			if(bouldercheck[j] == 1){
 				if(( boulderCoordinate[j].x + 60 >= hero.x && boulderCoordinate[j].x <= hero.x + 105) &&( boulderCoordinate[j].y <= hero.y + 80 )){
 					hero.health -= 5;
+					iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
 					boulderCoordinate[j].health = 0;
 				}
 			}
@@ -466,6 +467,7 @@ void collisionCheck2(){
 		for(int j = 0; j < 4; j++){
 				if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
 					hero.health -= 10;
+					iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
 					now[j].health = 0;
 				}
 			}
