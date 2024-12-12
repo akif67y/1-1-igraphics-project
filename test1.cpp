@@ -223,7 +223,7 @@ void drawArenapage(){
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0,"bmp_outputs//home.bmp",0);
 	iShowBMP2(10, 275,"bmp_outputs//arena1formenu.bmp",0);
-	// iShowBMP2(430, 275, "bmp_outputs//arena2formenu.bmp", 0);
+	iShowBMP2(430, 275, "bmp_outputs//arena2formenu.bmp", 0);
 	iShowBMP2(10, 5, "bmp_outputs//ship1.bmp", 0);
 	iShowBMP2(285, 5, "bmp_outputs//ship2.bmp", 0);
 
