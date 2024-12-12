@@ -223,13 +223,13 @@ void drawArenapage(){
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0,"bmp_outputs//home.bmp",0);
 	iShowBMP2(10, 275,"bmp_outputs//arena1formenu.bmp",0);
-	iShowBMP2(430, 275, "bmp_outputs//arena2formenu.bmp", 0);
+	// iShowBMP2(430, 275, "bmp_outputs//arena2formenu.bmp", 0);
 	iShowBMP2(10, 5, "bmp_outputs//ship1.bmp", 0);
 	iShowBMP2(285, 5, "bmp_outputs//ship2.bmp", 0);
 
-	// iSetColor(225,225,225);
-	// iText(10, 560, "ARENA", GLUT_BITMAP_TIMES_ROMAN_24);
-	// iText(10, 260, "SHIP", GLUT_BITMAP_TIMES_ROMAN_24);
+	iSetColor(225,225,225);
+	iText(10, 560, "ARENA", GLUT_BITMAP_TIMES_ROMAN_24);
+	iText(10, 260, "SHIP", GLUT_BITMAP_TIMES_ROMAN_24);
 
 }
 void drawhomepage(){
