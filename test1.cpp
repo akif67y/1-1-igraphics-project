@@ -15,8 +15,19 @@ void bulletchange();
 void collisionCheck2();
 void collisionresult();
 void collisionCheck1();
+void drawArenapage();
 // void boroboulderdraw();
+typedef struct{
+	int place;
+	int check;
+}arena;
+typedef struct {
+	int shiptype;
+	int check;
 
+}ship;
+arena are ;
+ship shi;
 int bouldernumber = 0;
 int gamestate = 1;
 int createBullet = 0;
@@ -65,7 +76,7 @@ void iDraw() {
 			drawhomepage();
 			break;
 			case 2:
-			drawStartpage();
+			drawArenapage();  // gamestate is 2 for drawarena page
 			break;
 			case 3:
 			drawScorepage();
@@ -76,6 +87,9 @@ void iDraw() {
 			case 5 :
 			drawAboutpage();
 			break;
+			case 6:
+			drawStartpage();  // drawstartpage is drawarena1 page
+
 		}
        
 
@@ -114,9 +128,41 @@ void iMouse(int button, int state, int mx, int my) {
 				}
 			}
 		}
-		if(gamestate == 2){
+
+
+		
+		else if(gamestate == 2){
+			if((mx > 10 && mx < 410) && (my > 275 && my < 550)){
+				are.place = 1;
+				are.check = 1;
+			}
+			if((mx > 430 && mx < 830) && (my > 275 && my < 550)){
+				are.place = 2;
+				are.check = 1;
+			}
+			if((mx > 10 && mx < 278) && (my > 5 && my < 270)){
+				shi.shiptype = 1;
+				shi.check = 1;
+			}
+			if((mx > 285 && mx < 553) && (my > 5 && my < 270)){
+				shi.shiptype = 2;
+				shi.check = 1;
+			}
+
+			if(shi.check == 1 && are.check == 1){
+				if( are.place == 1){
+					gamestate = 6;    // arena 1 e asteroid er khela hobe
+				}
+				else if(are.place == 2){
+					gamestate = 7;    // arena 2 e spaceship er khela hobe
+				}
+			}
+		}
+
+		else if(gamestate == 6){  // have to change this gamestate
 			createBullet = 1;
 		}
+
 		
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
@@ -130,10 +176,11 @@ void iMouse(int button, int state, int mx, int my) {
 	key- holds the ASCII value of the key pressed.
 	*/
 void iKeyboard(unsigned char key) {
-	if (key == 'k') {
-		createBullet = 1;
-	}
-	else if( key == 'd'){
+	// if (key == 'k') {
+	// 	createBullet = 1;
+	// }
+
+	if( key == 'd'){
 		int t = hero.x + 10;
 		if(t > 900){
 			hero.x = 900;
@@ -171,6 +218,20 @@ void iSpecialKeyboard(unsigned char key) {
 	}
 	
 }
+void drawArenapage(){
+	iSetColor(128,128,128);
+	iFilledRectangle(0,0,1000,600);
+	iShowBMP2(0,0,"bmp_outputs//home.bmp",0);
+	iShowBMP2(10, 275,"bmp_outputs//arena1formenu.bmp",0);
+	iShowBMP2(430, 275, "bmp_outputs//arena2formenu.bmp", 0);
+	iShowBMP2(10, 5, "bmp_outputs//ship1.bmp", 0);
+	iShowBMP2(285, 5, "bmp_outputs//ship2.bmp", 0);
+
+	// iSetColor(225,225,225);
+	// iText(10, 560, "ARENA", GLUT_BITMAP_TIMES_ROMAN_24);
+	// iText(10, 260, "SHIP", GLUT_BITMAP_TIMES_ROMAN_24);
+
+}
 void drawhomepage(){
     iSetColor(128, 128, 128);
 	iFilledRectangle(0,0,1000,600);
@@ -192,7 +253,7 @@ void drawStartpage(){
 	srand(time(NULL));
 	iSetColor(128,128,128);
 	iFilledRectangle(0,0,1000,600);
-	iShowBMP2(0,0, "bmp_outputs//background3.bmp", 0);
+	iShowBMP2(0,0, "bmp_outputs//arena1.bmp", 0);
 	iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
 	bulletchange();
 	for(int i = 0; i < 3; i++){
@@ -324,6 +385,11 @@ void first(){
 		boulderCoordinate[i].health = 10;
 	}
 
+	are.place = 0; 
+	are.check = 0;
+	shi.shiptype = 0;
+	shi.check = 0;
+
 }
 void collisionCheck1(){
 	// if  bullet hit any boulder
@@ -402,6 +468,8 @@ void collisionCheck2(){
 			}
 
 }
+
+
 
 
 
