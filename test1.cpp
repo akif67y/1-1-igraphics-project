@@ -20,6 +20,7 @@ void collisionship();
 void collisionshipresult();
 void asteriodgenerate();
 void healthcollision();
+void drawGameoverpage();
 // void rocketbullet();
 void drawarena2();
 void spaceshipgenerate();
@@ -27,7 +28,7 @@ void spaceshipgenerate();
 int gunpower = 10;
 int damage = 10;
 int damagecount = 0;
-
+int score = 0;
 typedef struct{
 	int x;
 	int y;
@@ -87,6 +88,15 @@ player boulderCoordinate[3];
 
 
 char point[10000];
+void scoreshower(){
+	iSetColor(129,128,128);
+	iFilledRectangle(100, 500, 100, 40);
+
+    sprintf(point,"Score : %d", score);
+	iSetColor(255,0,0);
+	iText(110, 520, point, GLUT_BITMAP_HELVETICA_10);
+
+}
 
 void healthchecker(){
 	iSetColor(129,128,128);
@@ -122,7 +132,9 @@ void iDraw() {
 			break;
 			case 7:
 			drawarena2();
-			break; // drawstartpage is drawarena1 page
+			break;
+			case 8:
+			drawGameoverpage(); // drawstartpage is drawarena1 page
 
 		}
        
@@ -196,6 +208,11 @@ void iMouse(int button, int state, int mx, int my) {
 		else if(gamestate == 6 || gamestate == 7){  // have to change this gamestate
 			createBullet = 1;
 		}
+		else if(gamestate == 8){
+			if((my >= 500 && my <= 600) && (mx >= 0 && mx <= 100)){
+				gamestate = 1;
+			}
+		}
 
 		
 	}
@@ -252,6 +269,12 @@ void iSpecialKeyboard(unsigned char key) {
 	}
 	
 }
+void drawGameoverpage(){
+	iSetColor(128,128,128);
+	iFilledRectangle(0,0,1000,600);
+	iShowBMP2(0,0,"bmp_outputs//gameover.bmp",0);
+	iShowBMP2(0,500,"bmp_outputs//idolo.bmp",1321060);
+}
 void drawArenapage(){
 	iSetColor(128,128,128);
 	iFilledRectangle(0,0,1000,600);
@@ -267,6 +290,10 @@ void drawArenapage(){
 
 }
 void drawhomepage(){
+	shi.check = 0;
+	are.check = 0;
+	hero.health = 100;
+	score = 0;
     iSetColor(128, 128, 128);
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0,"bmp_outputs//home.bmp", 0);
@@ -496,6 +523,10 @@ for(int i = 0; i < 2; i++){
 }
 
 void healthcollision(){
+		if(damagecount != 0){ damagecount--;}
+		else{
+			damage = 10;
+		}
 		if(shild.status == 1){
 			if(( shild.x + 30 >= hero.x && shild.x <= hero.x + 105) &&( shild.y <= hero.y + 76  && shild.y + 30 >= hero.y)){
 				damage = 0;
@@ -587,6 +618,7 @@ void drawarena2(){
 
 
 	healthchecker();
+	scoreshower();
 	
 	
 	}}
@@ -640,6 +672,7 @@ void drawStartpage(){
 
 	
 	healthchecker();
+	scoreshower();
 	
 
 	
@@ -870,7 +903,9 @@ for(int i = 0; i < 60; i++){
 void collisionshipresult(){
 		for(int j = 0; j< 3; j++){
 		if(boulderCoordinate[j].health <= 0){
+			score += 10;
 			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
+
 			bouldercheck[j] = 1;
 			boulderCoordinate[j].x = 0 + rand() % 600;
 			boulderCoordinate[j].y = 575;
@@ -879,7 +914,8 @@ void collisionshipresult(){
 	}
 	for(int i = 0; i< 2; i++){
 		if(rocket[i].health <= 0){
-			iShowBMP2(rocket[i].x, rocket[i].y, "bmp_outputs//collision.bmp",0);
+			score += 40;
+			iShowBMP2(rocket[i].x, rocket[i].y, "bmp_outputs//collision_effect.bmp",0);
 			rocket[i].health = 100;
 			if(i == 0){
 				rocket[i].x = 225;
@@ -898,12 +934,13 @@ void collisionshipresult(){
 
 
 if(hero.health <= 0){
-		exit(0);
+		gamestate = 8;
 	}
 }
 void collisionresult(){
 		for(int j = 0; j< 3; j++){
 		if(boulderCoordinate[j].health <= 0){
+			score += 10; // 10 points for boulders
 			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
 			bouldercheck[j] = 1;
 			boulderCoordinate[j].x = 0 + rand() % 600;
@@ -913,6 +950,7 @@ void collisionresult(){
 	}
 	for(int j = 0; j<4; j++){
 		if(now[j].health <= 0){
+			score += 20; // 20 points for big boulders
 			iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
 			now[j].y = 598;
 			now[j].health = 20;
@@ -920,7 +958,7 @@ void collisionresult(){
 		}
 	}
 	if(hero.health <= 0){
-		exit(0);
+		gamestate = 8;
 	}
 }
 void collisionCheck2(){
@@ -946,9 +984,7 @@ void collisionCheck2(){
 
 }
 
-void shield(){
 
-}
 
 
 
