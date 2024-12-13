@@ -326,25 +326,9 @@ void spaceshipgenerate(){  //
 			rocket[i].x = 900;
 			rocket[i].move = -1;
 		}
-		rocket[i].bulletcheck[39] = rocket[i].x + 45;
-		for(int j = 0 ; j < 60; j++){
-			
-			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
-			rocket[i].bulletcheck[j + 1] = 0;
-			
-		
-		// }
-		// rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;
-		}
 
 		}
-		
-		// rocket[i].bulletcheck[39] = rocket[i].x + 45;
-		// rocket[i].y = rocket[i].y - 10;
-		// if(rocket[i].y < 370){
-		// 	rocket[i].y = 370;  //keeping y fixed
-		// }
-		// for(int i = 0; i < 2; i++){
+	
 
 		
 		
@@ -671,3 +655,12 @@ int main() {
 	iInitialize(1000, 600, "SPACE COWBOY");
 	return 0;
 }
+// for(int j = 0 ; j < 60; j++){
+			
+// 			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
+// 			rocket[i].bulletcheck[j + 1] = 0;
+			
+		
+// 		// }
+// 		// rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;
+// 		}
