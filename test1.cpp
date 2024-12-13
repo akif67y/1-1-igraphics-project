@@ -330,7 +330,12 @@ void spaceshipgenerate(){  //
 		}
 	
 
-		
+	rocket[i].bulletcheck[39] = rocket[i].x + 45;
+	for(int l = 0; l < 59; l++){
+		rocket[i].bulletcheck[l] = rocket[i].bulletcheck[l+1];
+		rocket[i].bulletcheck[l+1] = 0;
+	}
+	rocket[i].bulletcheck[59] = 0;
 		
 			
 	}
