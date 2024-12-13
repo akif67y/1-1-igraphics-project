@@ -5,7 +5,7 @@
 #include <string.h>
 // boulder gular x change na kore asteriod gular koro
 
-int x = 0, y = 0, r = 20, k = 0; // k = count of enemy
+int x = 0, y = 0, r = 20; // k = count of enemy
 void drawhomepage();
 void drawStartpage();
 void drawAboutpage();
@@ -26,7 +26,7 @@ typedef struct{
 	int y;
 	int health;
 	int move;
-	int bulletcheck[60];
+	int bulletcheck[30];
 }spaceship;
 
 typedef struct{
@@ -278,12 +278,12 @@ void spaceshipgenerate(){  //
 			rocket[j].health = 100;
 			if(j == 0){
 				rocket[j].x = 225;
-				rocket[j].y = 390;
+				rocket[j].y = 490;
 
 			}
 			else if( j == 1){
 				rocket[j].x = 725;
-				rocket[j].y = 390;
+				rocket[j].y = 490;
 
 			}
 			// printf("%d", j);
@@ -301,10 +301,10 @@ void spaceshipgenerate(){  //
 		   //changing existing boulder coordinate
 		
 		if(rocket[i].move == 1){
-			rocket[i].x = rocket[i].x + 50  ;  // egla thikmoto kaj korteche nah
+			rocket[i].x = rocket[i].x + 20  ;  // egla thikmoto kaj korteche nah
 		}
 		else if(rocket[i].move == -1) {
-			rocket[i].x = rocket[i].x - 50  ;
+			rocket[i].x = rocket[i].x - 20  ;
 		}
 		if(i == 0){
 		if(rocket[i].x < 10){
@@ -330,12 +330,12 @@ void spaceshipgenerate(){  //
 		}
 	
 
-	rocket[i].bulletcheck[39] = rocket[i].x + 45;
-	for(int l = 0; l < 59; l++){
+	rocket[i].bulletcheck[24] = rocket[i].x + 45;
+	for(int l = 0; l < 29; l++){
 		rocket[i].bulletcheck[l] = rocket[i].bulletcheck[l+1];
 		rocket[i].bulletcheck[l+1] = 0;
 	}
-	rocket[i].bulletcheck[59] = 0;
+	rocket[i].bulletcheck[29] = 0;
 		
 			
 	}
@@ -347,6 +347,7 @@ void spaceshipgenerate(){  //
 		
 	
 
+		
 
 }
 
@@ -388,16 +389,17 @@ void drawarena2(){
 		iShowBMP2(hero.x, hero.y, "bmp_outputs//starwars.bmp", 0);
 	}
 	bulletchange();
+
 	for(int i = 0; i < 2; i++){
 		if(rocket[i].health > 0){  // it will work on bouldercheck status
 		
 		iShowBMP2(rocket[i].x, rocket[i].y,"bmp_outputs//enemy.bmp",0);
 	}
-	for(int j = 0 ; j < 40; j++){
+	for(int j = 0 ; j < 25; j++){
 
 		if(rocket[i].bulletcheck[j] != 0 && rocket[i].bulletcheck[j] != -1){  // 0 for out of screen and -1 for hitting the plane
 			
-			iShowBMP2(rocket[i].bulletcheck[j], j * 10, "bmp_outputs//sbullet.bmp", 0);  //showing the bullets where they are for every rocket
+			iShowBMP2(rocket[i].bulletcheck[j], j * 20, "bmp_outputs//sbullet.bmp", 0);  //showing the bullets where they are for every rocket
 			
 		}
 		
@@ -561,7 +563,7 @@ void first(){
 		rocket[i]. x = -1;
 		rocket[i].y = -1;
 		rocket[i].health = 0;
-		for(int j = 0; j < 60; j++) rocket[i].bulletcheck[j] = 0;
+		for(int j = 0; j < 30; j++) rocket[i].bulletcheck[j] = 0;
 		// rocket[i].bulletcheck[60] = {0};
 	}
 	rocket[0].move = 1;
@@ -655,7 +657,7 @@ int main() {
 	srand(time(NULL));
 	first();
 	iSetTimer(500, asteriodgenerate);
-	iSetTimer(250, spaceshipgenerate);
+	iSetTimer(500, spaceshipgenerate);
 	//place your own initialization codes here.
 	iInitialize(1000, 600, "SPACE COWBOY");
 	return 0;
