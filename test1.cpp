@@ -426,7 +426,7 @@ void drawStartpage(){
 	}
 	
 	bulletchange();
-	for(int i = 0; i < 1; i++){
+	for(int i = 0; i < 3; i++){
 		if(bouldercheck[i] == 1){  // it will work on bouldercheck status
 		
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
