@@ -16,10 +16,17 @@ void collisionCheck2();
 void collisionresult();
 void collisionCheck1();
 void drawArenapage();
+void collisionship();
+void collisionshipresult();
+void asteriodgenerate();
+void healthcollision();
 // void rocketbullet();
 void drawarena2();
 void spaceshipgenerate();
 // void boroboulderdraw();
+int gunpower = 10;
+int damage = 10;
+int damagecount = 0;
 
 typedef struct{
 	int x;
@@ -56,6 +63,16 @@ typedef struct borobol{
 	int y;
 	int health;
 }borobol;
+
+typedef struct {
+	int x;
+	int y;
+	int status;
+
+}object;
+
+object shild, helth, boost;
+
 
 
 borobol now[4];
@@ -342,6 +359,70 @@ void spaceshipgenerate(){  //
 	
 
 	}
+
+	int t = rand() % 2;
+	int p = rand() % 4;
+	if(t == 1){
+		for(int j = 0, k = 0; j < 3; j++){  // generating boulder at the start
+			if(k == p) break;
+			if(bouldercheck[j] == 0){
+
+			bouldercheck[j] = 1;
+			boulderCoordinate[j].x = 0 + rand() % 600;
+			boulderCoordinate[j].y = 575;
+			k++;
+			
+			}
+		}
+		
+	}
+		for(int i = 0; i < 3 ; i++){
+		int s = rand() % 2;   //changing existing boulder coordinate
+		
+		if(s == 0){
+			boulderCoordinate[i].x = boulderCoordinate[i].x + 50  ;
+		}
+		else {
+			boulderCoordinate[i].x = boulderCoordinate[i].x - 50  ;
+		}
+		
+		if(boulderCoordinate[i].x >= 990) boulderCoordinate[i].x = 990;  //ekta arektake hit korleo direction change kora uchit
+		if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 0;
+		boulderCoordinate[i].y = boulderCoordinate[i].y - 50;
+		if(boulderCoordinate[i].y < 5){
+			bouldercheck[i] = 0;  //removing it when reaches the end of the screen;
+		}
+		}
+
+		int f = rand() % 7;
+	if(f == 3 && shild.status == 0){
+		shild.x = 10 + rand() % 500;
+		shild.y = 590;
+		shild.status = 1;
+	}
+	else if(f == 2 && helth.status == 0){
+		helth.x = 10 + rand() % 500;
+		helth.y = 590;
+		helth.status = 1;
+	}
+	else if(f == 6 && boost.status == 0){
+		boost.x = 10 + rand() % 500;
+		boost.y = 590;
+		boost.status = 1;
+	}
+
+	if(shild.status == 1){
+		shild.y = shild.y - 50;
+		if(shild.y < 5) shild.status = 0;
+	}
+	if(helth.status == 1){
+		helth.y = helth.y - 50;
+		if(helth.y < 5) helth.status = 0;
+	}
+	if(boost.status == 1){
+		boost.y = boost.y - 50;
+		if(boost.y < 5) boost.status = 0;
+	}
 	
 	}
 		
@@ -350,27 +431,100 @@ void spaceshipgenerate(){  //
 		
 
 }
+void collisionship(){
 
-// void rocketbullet()
-// {
-// 	for(int i = 0; i < 10; i++){
-// 		rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;  //generating at the y coordinate of the ship
-// 	for(int j = 0 ; j < 60; j++){
-// 		if(rocket[i].bulletcheck[j] != 0 && rocket[i].bulletcheck[j] != -1){  // 0 for out of screen and -1 for hitting the plane
+	for(int i = 0; i < 60; i++){
+		if(bulletcheck[i] != 0 && bulletcheck[i] != -1){  // bullet hits plane
 			
-// 			iShowBMP2(rocket[i].bulletcheck[j], j * 10, "bmp_outputs//sbullet.bmp", 0);  //showing the bullets where they are for every rocket
-			
-// 		}
-// 	}
-// 	for(int j = 0 ; j < 60; j++){
-// 			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
-// 			rocket[i].bulletcheck[j + 1] = 0;
-		
-// 	}
-		
-// 	}
+			for(int k = 0; k < 2; k++){
+				if(rocket[k].health > 0){
+					if((bulletcheck[i] >= rocket[k].x && bulletcheck[i] <= rocket[k].x + 100) &&( (i * 10 >= rocket[k].y && i * 10 <= rocket[k].y + 100) )){
+						rocket[k].health -= gunpower * 3;
+						bulletcheck[i] = -1;
+						
+					}
+				}
+			}
 
-// 	}
+
+			for(int k = 0; k < 3; k++){  // bullet hitls boulder health decrease of boulder
+				if(bouldercheck[k] == 1){
+					if((bulletcheck[i] >= boulderCoordinate[k].x && bulletcheck[i] <= boulderCoordinate[k].x + 60) &&( (i * 10 >= boulderCoordinate[k].y && i * 10 <= boulderCoordinate[k].y + 60) )){
+						boulderCoordinate[k].health -= gunpower;
+						bulletcheck[i] = -1;
+						
+					}
+				}
+			}
+
+		}
+
+	}
+		//boulder hits plane
+		for(int j = 0; j < 3;j++){
+			if(bouldercheck[j] == 1){
+				if(( boulderCoordinate[j].x + 60 >= hero.x && boulderCoordinate[j].x <= hero.x + 105) &&( boulderCoordinate[j].y <= hero.y + 80 )){
+					hero.health -= damage /2;
+					iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
+					boulderCoordinate[j].health = 0;
+				}
+			}
+			
+		}
+
+// bullet of enemy hits plane
+for(int i = 0; i < 2; i++){
+	for(int j = 0; j < 30; j++){
+
+		if(rocket[i].bulletcheck[j] != 0 && rocket[i].bulletcheck[j] != -1){
+
+					if((rocket[i].bulletcheck[j] >= hero.x && rocket[i].bulletcheck[j] <= hero.x + 100) &&( (j * 20 >= hero.y && j * 20 <= hero.y + 70) )){
+						iShowBMP2(hero.x, hero.y, "bmp_outputs//collision.bmp",0);
+						hero.health -= damage / 5;
+						rocket[i].bulletcheck[j] = -1;	
+					}
+				
+		}
+
+	}
+
+}
+
+
+
+
+}
+
+void healthcollision(){
+		if(shild.status == 1){
+			if(( shild.x + 30 >= hero.x && shild.x <= hero.x + 105) &&( shild.y <= hero.y + 76  && shild.y + 30 >= hero.y)){
+				damage = 0;
+				damagecount = 1000;
+				shild.status = 0;
+			}
+		}
+
+
+		if(helth.status == 1){
+			if(( helth.x + 30 >= hero.x && helth.x <= hero.x + 105) &&( helth.y <= hero.y + 76  && helth.y + 30 >= hero.y)){
+				hero.health = hero.health + 100;
+				helth.status = 0;
+			}
+		 }
+
+		
+			if(boost.status == 1){
+			if(( boost.x + 30 >= hero.x && boost.x <= hero.x + 105) &&( boost.y <= hero.y + 76  && boost.y + 30>= hero.y)){
+				gunpower = gunpower + 5;
+				boost.status = 0;
+			}
+		}
+	
+}
+
+
+
+
 
 
 		
@@ -383,12 +537,24 @@ void drawarena2(){
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0, "bmp_outputs//arena2.bmp", 0);
 	if(shi.shiptype == 1){
+		if(damagecount != 0){
+			iCircle(hero.x + 50, hero.y + 50, 50);
+		}
 		iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
 	}
 	else if(shi.shiptype == 2){
+		if(damagecount != 0){
+			iCircle(hero.x + 50, hero.y + 50, 50);
+		}
 		iShowBMP2(hero.x, hero.y, "bmp_outputs//starwars.bmp", 0);
 	}
 	bulletchange();
+		for(int i = 0; i < 3; i++){
+		if(bouldercheck[i] == 1){  // it will work on bouldercheck status
+		
+		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
+	}
+	}
 
 	for(int i = 0; i < 2; i++){
 		if(rocket[i].health > 0){  // it will work on bouldercheck status
@@ -404,12 +570,25 @@ void drawarena2(){
 		}
 		
 	}
+
+	if(helth.status == 1){
+		iShowBMP2(helth.x, helth.y, "bmp_outputs//health.bmp",0);
+	}
+	if(shild.status == 1){
+		iShowBMP2(shild.x, shild.y, "bmp_outputs//shield.bmp",0);
+	}
+	if(boost.status == 1){
+		iShowBMP2(boost.x, boost.y, "bmp_outputs//booster_token.bmp",0);
+	}
 	
-	// rocketbullet();
+	collisionship();
+	healthcollision();
+	collisionshipresult();
 
-	// rocket er bullet taki alada kore function e  kora uchit??
 
-	//collisioncheck and healthcheck
+	healthchecker();
+	
+	
 	}}
 
 	
@@ -419,9 +598,15 @@ void drawStartpage(){
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0, "bmp_outputs//arena1.bmp", 0);
 	if(shi.shiptype == 1){
+		if(damagecount != 0){
+			iCircle(hero.x + 50, hero.y + 50, 50);
+		}
 		iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
-	}
+	} 
 	else if(shi.shiptype == 2){
+		if(damagecount != 0){
+			iCircle(hero.x + 50, hero.y + 50, 50);
+		}
 		iShowBMP2(hero.x, hero.y, "bmp_outputs//starwars.bmp", 0);
 	}
 	
@@ -432,8 +617,6 @@ void drawStartpage(){
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
 	}
 	}
-	collisionCheck1();
-	collisionresult();
 	
 	for(int i = 0; i < 4; i++){   
 
@@ -441,8 +624,21 @@ void drawStartpage(){
 		iShowBMP2(now[i].x, now[i].y, now[i].image, 0);
 	
 	}
+	if(shild.status == 1){
+		iShowBMP2(shild.x, shild.y, "bmp_outputs//shield.bmp",0);
+	}
+	if(helth.status == 1){
+		iShowBMP2(helth.x, helth.y, "bmp_outputs//health.bmp",0);
+	}
+	
+	if(boost.status == 1){
+		iShowBMP2(boost.x, boost.y, "bmp_outputs//booster_token.bmp",0);
+	}
+	collisionCheck1();
 	collisionCheck2();
 	collisionresult();
+
+	
 	healthchecker();
 	
 
@@ -512,7 +708,41 @@ if(gamestate == 6){
 		
 		}
 
-	}}
+			int f = rand() % 7;
+	if(f == 3 && shild.status == 0){
+		shild.x = 10 + rand() % 500;
+		shild.y = 590;
+		shild.status = 1;
+	}
+	else if(f == 2 && helth.status == 0){
+		helth.x = 10 + rand() % 500;
+		helth.y = 590;
+		helth.status = 1;
+	}
+	else if(f == 6 && boost.status == 0){
+		boost.x = 10 + rand() % 500;
+		boost.y = 590;
+		boost.status = 1;
+	}
+
+	if(shild.status == 1){
+		shild.y = shild.y - 80;
+		if(shild.y < 10) shild.status = 0;
+	}
+	if(helth.status == 1){
+		helth.y = helth.y - 80;
+		if(helth.y < 10) helth.status = 0;
+	}
+	if(boost.status == 1){
+		boost.y = boost.y - 80;
+		if(boost.y < 10) boost.status = 0;
+	}
+
+	}
+
+	
+	
+	}
 
 
 
@@ -569,7 +799,18 @@ void first(){
 	rocket[0].move = 1;
 	rocket[1].move = -1;
 
+	shild.x = 0;
+	shild.y = 0;
+	shild.status = 0;
+	helth.x = 0;
+	helth.y = 0;
+	helth.status =0;
+	boost.x = 0;
+	boost.y = 0;
+	boost.status = 0;
+
 }
+
 void collisionCheck1(){
 	// if  bullet hit any boulder
 	// asteriod
@@ -580,7 +821,7 @@ for(int i = 0; i < 60; i++){
 			for(int k = 0; k < 3; k++){
 				if(bouldercheck[k] == 1){
 					if((bulletcheck[i] >= boulderCoordinate[k].x && bulletcheck[i] <= boulderCoordinate[k].x + 60) &&( (i * 10 >= boulderCoordinate[k].y && i * 10 <= boulderCoordinate[k].y + 60) )){
-						boulderCoordinate[k].health -= 10;
+						boulderCoordinate[k].health -= gunpower;
 						bulletcheck[i] = -1;
 						
 					}
@@ -593,19 +834,76 @@ for(int i = 0; i < 60; i++){
 		for(int j = 0; j < 3;j++){
 			if(bouldercheck[j] == 1){
 				if(( boulderCoordinate[j].x + 60 >= hero.x && boulderCoordinate[j].x <= hero.x + 105) &&( boulderCoordinate[j].y <= hero.y + 80 )){
-					hero.health -= 5;
+					hero.health -= damage;
 					iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
 					boulderCoordinate[j].health = 0;
 				}
 			}
 			
 		}
+		if(damagecount != 0){ damagecount--;}
+		else{
+			damage = 10;
+		}
+		if(shild.status == 1){
+			if(( shild.x + 30 >= hero.x && shild.x <= hero.x + 105) &&( shild.y <= hero.y + 30  && shild.y >= hero.y)){
+				damage = 0;
+				damagecount = 1000;
+				shild.status = 0;
+			}
+		}
+		if(helth.status == 1){
+			if(( helth.x + 30 >= hero.x && helth.x <= hero.x + 105) &&( helth.y <= hero.y + 30  && helth.y >= hero.y)){
+				hero.health = hero.health + 100;
+				helth.status = 0;
+			}
+		}
+		if(boost.status == 1){
+			if(( boost.x + 30 >= hero.x && boost.x <= hero.x + 105) &&( boost.y <= hero.y + 30  && boost.y >= hero.y)){
+				gunpower = gunpower + 5;
+				boost.status = 0;
+			}
+		}
 
 
 }
+void collisionshipresult(){
+		for(int j = 0; j< 3; j++){
+		if(boulderCoordinate[j].health <= 0){
+			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
+			bouldercheck[j] = 1;
+			boulderCoordinate[j].x = 0 + rand() % 600;
+			boulderCoordinate[j].y = 575;
+			boulderCoordinate[j].health = 10;
+		}
+	}
+	for(int i = 0; i< 2; i++){
+		if(rocket[i].health <= 0){
+			iShowBMP2(rocket[i].x, rocket[i].y, "bmp_outputs//collision.bmp",0);
+			rocket[i].health = 100;
+			if(i == 0){
+				rocket[i].x = 225;
+				rocket[i].y = 490;
+
+			}
+			else if( i == 1){
+				rocket[i].x = 725;
+				rocket[i].y = 490;
+
+			}
+
+		}
+	}
+
+
+
+if(hero.health <= 0){
+		exit(0);
+	}
+}
 void collisionresult(){
 		for(int j = 0; j< 3; j++){
-		if(boulderCoordinate[j].health == 0){
+		if(boulderCoordinate[j].health <= 0){
 			iShowBMP2(boulderCoordinate[j].x, boulderCoordinate[j].y, "bmp_outputs//collision.bmp",0);
 			bouldercheck[j] = 1;
 			boulderCoordinate[j].x = 0 + rand() % 600;
@@ -614,7 +912,7 @@ void collisionresult(){
 		}
 	}
 	for(int j = 0; j<4; j++){
-		if(now[j].health == 0){
+		if(now[j].health <= 0){
 			iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
 			now[j].y = 598;
 			now[j].health = 20;
@@ -631,7 +929,7 @@ void collisionCheck2(){
 			// boulder
 			for(int j = 0; j < 4; j++){
 				if((bulletcheck[i] >= now[j].x && bulletcheck[i] <= now[j].x + 60) &&( (i * 10 >= now[j].y && i * 10 <= now[j].y + 60) )){
-					now[j].health = now[j].health - 10;
+					now[j].health = now[j].health - gunpower;
 					bulletcheck[i] = -1;
 				}
 			}
@@ -640,7 +938,7 @@ void collisionCheck2(){
 		}
 		for(int j = 0; j < 4; j++){
 				if(( now[j].x + 60 >= hero.x && now[j].x <= hero.x + 105) &&(  now[j].y <= hero.y + 80 )){
-					hero.health -= 10;
+					hero.health -= damage;
 					iShowBMP2(now[j].x,now[j].y, "bmp_outputs//collision.bmp",0);
 					now[j].health = 0;
 				}
@@ -648,6 +946,9 @@ void collisionCheck2(){
 
 }
 
+void shield(){
+
+}
 
 
 
@@ -657,17 +958,8 @@ int main() {
 	srand(time(NULL));
 	first();
 	iSetTimer(500, asteriodgenerate);
-	iSetTimer(500, spaceshipgenerate);
+	iSetTimer(200, spaceshipgenerate);
 	//place your own initialization codes here.
 	iInitialize(1000, 600, "SPACE COWBOY");
 	return 0;
 }
-// for(int j = 0 ; j < 60; j++){
-			
-// 			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
-// 			rocket[i].bulletcheck[j + 1] = 0;
-			
-		
-// 		// }
-// 		// rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;
-// 		}
