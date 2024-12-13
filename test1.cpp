@@ -5,7 +5,7 @@
 #include <string.h>
 // boulder gular x change na kore asteriod gular koro
 
-int x = 0, y = 0, r = 20;
+int x = 0, y = 0, r = 20, k = 0; // k = count of enemy
 void drawhomepage();
 void drawStartpage();
 void drawAboutpage();
@@ -16,7 +16,19 @@ void collisionCheck2();
 void collisionresult();
 void collisionCheck1();
 void drawArenapage();
+// void rocketbullet();
+void drawarena2();
+void spaceshipgenerate();
 // void boroboulderdraw();
+
+typedef struct{
+	int x;
+	int y;
+	int health;
+	int move;
+	int bulletcheck[60];
+}spaceship;
+
 typedef struct{
 	int place;
 	int check;
@@ -47,6 +59,7 @@ typedef struct borobol{
 
 
 borobol now[4];
+spaceship rocket[2];
 
 
 char boulder[3][250] = {"bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp", "bmp_outputs//asteroid.bmp" };
@@ -88,7 +101,11 @@ void iDraw() {
 			drawAboutpage();
 			break;
 			case 6:
-			drawStartpage();  // drawstartpage is drawarena1 page
+			drawStartpage(); 
+			break;
+			case 7:
+			drawarena2();
+			break; // drawstartpage is drawarena1 page
 
 		}
        
@@ -159,7 +176,7 @@ void iMouse(int button, int state, int mx, int my) {
 			}
 		}
 
-		else if(gamestate == 6){  // have to change this gamestate
+		else if(gamestate == 6 || gamestate == 7){  // have to change this gamestate
 			createBullet = 1;
 		}
 
@@ -249,14 +266,176 @@ void drawhomepage(){
 	iText(800, 518, "PLAY", GLUT_BITMAP_TIMES_ROMAN_24);
 
 }
+void spaceshipgenerate(){  //
+	// srand(time(NULL));
+	if(gamestate == 7){
+		// srand(time)
+	
+		for(int j = 0; j < 2 ; j++){  // generating boulder at the start
+			// if(k == p) break;
+			if(rocket[j].health <= 0){
+
+			rocket[j].health = 100;
+			if(j == 0){
+				rocket[j].x = 225;
+				rocket[j].y = 390;
+
+			}
+			else if( j == 1){
+				rocket[j].x = 725;
+				rocket[j].y = 390;
+
+			}
+			// printf("%d", j);
+			// k++;
+			}
+		
+		}
+	
+	//changing exosting rocket x coordinate
+	
+	for(int i = 0; i < 2 ; i++){  // i can make it one loop
+
+		if(rocket[i].health > 0){
+
+		   //changing existing boulder coordinate
+		
+		if(rocket[i].move == 1){
+			rocket[i].x = rocket[i].x + 50  ;  // egla thikmoto kaj korteche nah
+		}
+		else if(rocket[i].move == -1) {
+			rocket[i].x = rocket[i].x - 50  ;
+		}
+		if(i == 0){
+		if(rocket[i].x < 10){
+			rocket[i].x = 10 ;
+			rocket[i].move = 1;
+		}
+		else if(rocket[i].x > 445 ) {
+			rocket[i].x = 445;
+			rocket[i].move = -1;
+		}
+
+		}
+		else if( i == 1){
+			if(rocket[i].x < 555){
+			rocket[i].x = 555 ;
+			rocket[i].move = 1;
+		}
+		else if(rocket[i].x > 900 ) {
+			rocket[i].x = 900;
+			rocket[i].move = -1;
+		}
+		rocket[i].bulletcheck[39] = rocket[i].x + 45;
+		for(int j = 0 ; j < 60; j++){
+			
+			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
+			rocket[i].bulletcheck[j + 1] = 0;
+			
+		
+		// }
+		// rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;
+		}
+
+		}
+		
+		// rocket[i].bulletcheck[39] = rocket[i].x + 45;
+		// rocket[i].y = rocket[i].y - 10;
+		// if(rocket[i].y < 370){
+		// 	rocket[i].y = 370;  //keeping y fixed
+		// }
+		// for(int i = 0; i < 2; i++){
+
+		
+		
+			
+	}
+	
+
+	}
+	
+	}
+		
+	
+
+
+}
+
+// void rocketbullet()
+// {
+// 	for(int i = 0; i < 10; i++){
+// 		rocket[i].bulletcheck[(rocket[i].y)/10] = rocket[i].x + 45;  //generating at the y coordinate of the ship
+// 	for(int j = 0 ; j < 60; j++){
+// 		if(rocket[i].bulletcheck[j] != 0 && rocket[i].bulletcheck[j] != -1){  // 0 for out of screen and -1 for hitting the plane
+			
+// 			iShowBMP2(rocket[i].bulletcheck[j], j * 10, "bmp_outputs//sbullet.bmp", 0);  //showing the bullets where they are for every rocket
+			
+// 		}
+// 	}
+// 	for(int j = 0 ; j < 60; j++){
+// 			rocket[i].bulletcheck[j] = rocket[i].bulletcheck[j + 1] ; // passing bullet information to the next coordinate
+// 			rocket[i].bulletcheck[j + 1] = 0;
+		
+// 	}
+		
+// 	}
+
+// 	}
+
+
+		
+
+
+
+void drawarena2(){
+
+	iSetColor(128,128,128);
+	iFilledRectangle(0,0,1000,600);
+	iShowBMP2(0,0, "bmp_outputs//arena2.bmp", 0);
+	if(shi.shiptype == 1){
+		iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
+	}
+	else if(shi.shiptype == 2){
+		iShowBMP2(hero.x, hero.y, "bmp_outputs//starwars.bmp", 0);
+	}
+	bulletchange();
+	for(int i = 0; i < 2; i++){
+		if(rocket[i].health > 0){  // it will work on bouldercheck status
+		
+		iShowBMP2(rocket[i].x, rocket[i].y,"bmp_outputs//enemy.bmp",0);
+	}
+	for(int j = 0 ; j < 40; j++){
+
+		if(rocket[i].bulletcheck[j] != 0 && rocket[i].bulletcheck[j] != -1){  // 0 for out of screen and -1 for hitting the plane
+			
+			iShowBMP2(rocket[i].bulletcheck[j], j * 10, "bmp_outputs//sbullet.bmp", 0);  //showing the bullets where they are for every rocket
+			
+		}
+		
+	}
+	
+	// rocketbullet();
+
+	// rocket er bullet taki alada kore function e  kora uchit??
+
+	//collisioncheck and healthcheck
+	}}
+
+	
 void drawStartpage(){
-	srand(time(NULL));
+	// srand(time(NULL));
 	iSetColor(128,128,128);
 	iFilledRectangle(0,0,1000,600);
 	iShowBMP2(0,0, "bmp_outputs//arena1.bmp", 0);
-	iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
+	if(shi.shiptype == 1){
+		iShowBMP2(hero.x, hero.y, "bmp_outputs//spike2.bmp", 0);
+	}
+	else if(shi.shiptype == 2){
+		iShowBMP2(hero.x, hero.y, "bmp_outputs//starwars.bmp", 0);
+	}
+	
 	bulletchange();
-	for(int i = 0; i < 3; i++){
+	for(int i = 0; i < 1; i++){
 		if(bouldercheck[i] == 1){  // it will work on bouldercheck status
 		
 		iShowBMP2(boulderCoordinate[i].x, boulderCoordinate[i].y, boulder[i],0);
@@ -299,9 +478,9 @@ void bulletchange(){
 
 }
 void asteriodgenerate(){
-
-
-int t = rand() % 2;
+// eita execute howar jonno condition deya lagbe(differenent arena te gele eita execute hobena)
+if(gamestate == 6){
+	int t = rand() % 2;
 	int p = rand() % 4;
 	if(t == 1){
 		for(int j = 0, k = 0; j < 3; j++){  // generating boulder at the start
@@ -327,7 +506,7 @@ int t = rand() % 2;
 			boulderCoordinate[i].x = boulderCoordinate[i].x - 50  ;
 		}
 		
-		if(boulderCoordinate[i].x >= 990) boulderCoordinate[i].x = 990;
+		if(boulderCoordinate[i].x >= 990) boulderCoordinate[i].x = 990;  //ekta arektake hit korleo direction change kora uchit
 		if(boulderCoordinate[i].x < 10) boulderCoordinate[i]. x = 0;
 		boulderCoordinate[i].y = boulderCoordinate[i].y - 50;
 		if(boulderCoordinate[i].y < 5){
@@ -342,10 +521,9 @@ int t = rand() % 2;
 		
 		}
 
-	}
+	}}
 
-	
-	
+
 
 
 
@@ -362,7 +540,7 @@ void drawScorepage(){
 
 }
 void first(){
-		srand(time(NULL));
+	// srand(time(NULL));
 	hero.x = 500;
 	hero.y = 0;
 	hero.health = 100;
@@ -389,6 +567,16 @@ void first(){
 	are.check = 0;
 	shi.shiptype = 0;
 	shi.check = 0;
+
+	for(int i = 0; i < 2; i++){
+		rocket[i]. x = -1;
+		rocket[i].y = -1;
+		rocket[i].health = 0;
+		for(int j = 0; j < 60; j++) rocket[i].bulletcheck[j] = 0;
+		// rocket[i].bulletcheck[60] = {0};
+	}
+	rocket[0].move = 1;
+	rocket[1].move = -1;
 
 }
 void collisionCheck1(){
@@ -475,8 +663,10 @@ void collisionCheck2(){
 
 
 int main() {
+	srand(time(NULL));
 	first();
 	iSetTimer(500, asteriodgenerate);
+	iSetTimer(250, spaceshipgenerate);
 	//place your own initialization codes here.
 	iInitialize(1000, 600, "SPACE COWBOY");
 	return 0;
